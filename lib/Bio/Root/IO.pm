@@ -208,8 +208,13 @@ sub _initialize_io {
     if ($url) {
         $retries ||= 5;
 
-        require LWP::UserAgent;
-        my $ua = LWP::UserAgent->new(%$ua_parms);
+        my $ua;
+        eval {
+			require LWP::UserAgent;
+			$ua = LWP::UserAgent->new(%$ua_parms);
+        };
+        $self->throw("Please install LWP::UserAgent") unless $ua;
+
         my $http_result;
         my ($handle, $tempfile) = $self->tempfile();
         CORE::close($handle);
