@@ -49,7 +49,7 @@ is $feat->phase, undef, 'Undef phase by default';
 is $feat->phase(1), 1, 'Phase accessor returns';
 is $feat->phase, 1, 'Phase is persistent';
 
-ok $feat->gff_string();
+# ok $feat->gff_string();
 
 ok $feat2 = Bio::SeqFeature::Generic->new(
     -start => 400,

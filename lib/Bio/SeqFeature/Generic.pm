@@ -148,7 +148,7 @@ use Carp;
 use Bio::Annotation::Collection;
 use Bio::Location::Simple;
 use Bio::Location::Split;
-use Bio::Tools::GFF;
+# use Bio::Tools::GFF;
 #use Tie::IxHash;
 
 use base qw(Bio::Root::Root Bio::SeqFeatureI Bio::FeatureHolderI Bio::AnnotatableI);
@@ -223,10 +223,10 @@ sub set_attributes {
                                   )], @args);
     $location    && $self->location($location);
     $gff_string  && $self->_from_gff_string($gff_string);
-    $gff1_string  && do {
-        $self->gff_format(Bio::Tools::GFF->new('-gff_version' => 1));
-        $self->_from_gff_stream($gff1_string);
-    };
+#     $gff1_string  && do {
+#         $self->gff_format(Bio::Tools::GFF->new('-gff_version' => 1));
+#         $self->_from_gff_stream($gff1_string);
+#     };
     
     $pid                  && $self->primary_id($pid);
     $primary_tag          && $self->primary_tag($primary_tag);

@@ -395,11 +395,12 @@ my $static_gff_formatter = undef;
 
 sub _static_gff_formatter{
    my ($self,@args) = @_;
-   require Bio::Tools::GFF; # on the fly inclusion -- is this better?
-   if( !defined $static_gff_formatter ) {
-       $static_gff_formatter = Bio::Tools::GFF->new('-gff_version' => 2);
-   }
-   return $static_gff_formatter;
+   $self->throw("Please install full Bio::Perl package");
+#    require Bio::Tools::GFF; # on the fly inclusion -- is this better?
+#    if( !defined $static_gff_formatter ) {
+#        $static_gff_formatter = Bio::Tools::GFF->new('-gff_version' => 2);
+#    }
+#    return $static_gff_formatter;
 }
 
 
