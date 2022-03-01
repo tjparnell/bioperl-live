@@ -1,56 +1,36 @@
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.16344.svg)](http://dx.doi.org/10.5281/zenodo.16344)
-[![Build Status](https://travis-ci.org/bioperl/bioperl-live.svg?branch=master)](https://travis-ci.org/bioperl/bioperl-live)
-[![Coverage Status](https://coveralls.io/repos/bioperl/bioperl-live/badge.svg?branch=master)](https://coveralls.io/r/bioperl/bioperl-live?branch=master)
-[![Documentation Status](https://readthedocs.org/projects/bioperl/badge/?version=latest)](https://readthedocs.org/projects/bioperl/?badge=latest)
+# Minimal BioPerl
+
+**WARNING** This is a minimal, bare-bones, stripped-down version of the full 
+BioPerl package intended to provide the essential modules for the 
+[BioToolBox](https://github.com/tjparnell/biotoolbox) package and 
+dependent modules, including 
+[Bio::DB::HTS](https://metacpan.org/pod/Bio::DB::HTS),
+[Bio::DB::SeqFeature::Store](https://metacpan.org/pod/Bio::DB::SeqFeature::Store),
+[Bio::DB::Sam](https://metacpan.org/pod/Bio::DB::Sam),
+[Bio::DB::BigWig](https://metacpan.org/pod/Bio::DB::BigWig),
+[Bio::DB::BigBed](https://metacpan.org/pod/Bio::DB::BigBed),
+and [Bio::DB::USeq](https://metacpan.org/pod/Bio::DB::USeq). 
+
+It is sufficient for running these packages, __but not much more__. 
+
+If you intend to use BioPerl packages or code, or other packages that use
+BioPerl modules, you may better off installing the full package, not this one.
+
+The full BioPerl package (version 1.7.8) includes 471 module files 
+and 820 test files, and a fresh installation installs as many as 83
+additional CPAN packages.
+
+This minimal BioPerl package includes only 60 module files and 33 
+test files, and a fresh installation will only bring 15 additional 
+packages. In general, this footprint is roughly a third of the full 
+installation.
 
 # About BioPerl
 
-BioPerl is a project for development of free and open source Perl
-tools for computational molecular biology.  For example, it includes
-classes for biological sequences, readers of multiple formats,
-sequence alignments, database searching objects, and interfaces to
-multiple programs such as EMBOSS, ClustalW, and BLAST.
-
-The BioPerl project has developed multiple module distributions for
-different purposes.  The one named BioPerl (named after the project)
-provides the foundation for all others distributions.
-
-This is the repository for the BioPerl distribution only.  Other
-distributions have [their own
-repositories](https://github.com/bioperl/).
+Please see the [original BioPerl](https://github.com/bioperl/bioperl-live)
+site for details about this package.
 
 # Installation
 
-BioPerl distribution has the same name as the BioPerl.  However, the
-BioPerl distribution only includes a subset of the project modules.
-Because of this, the meaning of "installing BioPerl" is rarely clear.
-Instead of "install BioPerl", the aim must be "install module X".
+Download the provided tarball from here. 
 
-[CPAN.org](https://www.cpan.org/modules/INSTALL.html) provides an
-overview on how to install and manage Perl modules but the bottom-line
-is:
-
-1. find the module you need, for example `Bio::DB::EUtilities`
-2. install it with `cpanm`, for example `cpanm Bio::DB::EUtilities`
-
-Alternatively, some Linux distributions have packaged BioPerl and have
-it available through their package manager.
-
-# Documentation and Support
-
-Documentation for individual modules is in POD and can also be read
-online at [metacpan](https://metacpan.org/pod/BioPerl).  Useful
-documentation in the form of example code can also be found in the
-`examples/` and `bin/` directories.
-
-Additional resources and information about the project is available on
-the [project website](https://bioperl.org), with discussion happening
-on the [bioperl-l@bioperl.org](mailto:bioperl-l@bioperl.org) mailing
-list, and on the `#bioperl` channel of the freenode IRC server.
-
-Bug reports are handle on the distribution github page.
-
-# Development
-
-See the [`HACKING.md`](HACKING.md) file for details on the project
-structure, such as building from source and running the test suite.
