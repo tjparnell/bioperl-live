@@ -6,12 +6,11 @@ use strict;
 BEGIN {
     use Bio::Root::Test;
 
-    test_begin(-tests => 76);
+    test_begin(-tests => 74);
 
     use_ok('Bio::Seq');
     use_ok('Bio::Seq::RichSeq');
     use_ok('Bio::SeqFeature::Generic');
-    use_ok('Bio::Species');
     use_ok('Bio::Annotation::SimpleValue');
 }
 
@@ -73,14 +72,6 @@ my $newfeat = Bio::SeqFeature::Generic->new( -start => 10,
 $seq->add_SeqFeature($newfeat);
 is $seq->feature_count, 1;
 
-my $species = Bio::Species->new
-    (-verbose => 1,
-     -classification => [ qw( sapiens Homo Hominidae
-                              Catarrhini Primates Eutheria
-                              Mammalia Vertebrata Chordata
-                              Metazoa Eukaryota )]);
-$seq->species($species);
-is $seq->species->binomial, 'Homo sapiens';
 $seq->annotation->add_Annotation('description',
                  Bio::Annotation::SimpleValue->new(-value => 'desc-here'));
 my ($descr) = $seq->annotation->get_Annotations('description');

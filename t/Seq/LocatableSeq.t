@@ -6,10 +6,9 @@ use strict;
 BEGIN {
     use Bio::Root::Test;
 
-    test_begin(-tests => 119);
+    test_begin(-tests => 109);
 
     use_ok('Bio::LocatableSeq');
-    use_ok('Bio::AlignIO');
 }
 
 my ($str, $aln, $seq, $loc);
@@ -40,21 +39,11 @@ is $loc->location_type, 'IN-BETWEEN';
 is $loc->to_FTstring, '3^4';
 
 is $loc = $seq->location_from_column(2), undef;
-TODO: {
-  local $TODO = "Need to fix columns before start of seq w/ start > 1";
-  $seq->start(90);
-  is $loc = $seq->location_from_column(2), undef;
-}
-
-$str = Bio::AlignIO->new(-file=> test_input_file('testaln.pfam'));
-ok defined($str);
-isa_ok $str,'Bio::AlignIO';
-$aln = $str->next_aln();
-ok $seq = $aln->get_seq_by_pos(1);
-is ref($seq), 'Bio::LocatableSeq';
-
-is $seq->get_nse, '1433_LYCES/9-246';
-is $seq->id, '1433_LYCES';
+# TODO: {
+#   local $TODO = "Need to fix columns before start of seq w/ start > 1";
+#   $seq->start(90);
+#   is $loc = $seq->location_from_column(2), undef;
+# }
 
 # test invalid sequence
 
@@ -299,12 +288,4 @@ is $Bio::LocatableSeq::GAP_SYMBOLS, '\-\.=~';
 
 is $seq->end, 15;
 
-# note, recalling the end() method uses old $GAP_SYMBOLS, which
-# no longer are set (this argues for locally set symbols)
-TODO: {
-    local $TODO = 'Bio::LocatableSeq global variables have scoping issues';
-    is $Bio::LocatableSeq::GAP_SYMBOLS, '-\?';
-    # this should be 15 
-    isnt $seq->end(19), 19;
-}
 

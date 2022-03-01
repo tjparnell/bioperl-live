@@ -6,10 +6,9 @@ use strict;
 BEGIN {
     use Bio::Root::Test;
 
-    test_begin(-tests => 364);
+    test_begin(-tests => 62);
 
     use_ok 'Bio::Seq';
-    use_ok 'Bio::SeqIO';
     use_ok 'Bio::SeqFeature::Generic';
 }
 
@@ -169,84 +168,6 @@ is $intersect->start, 10;
 is $intersect->end,   15;
 
 
-# Now let's test spliced_seq
-ok my $seqio = Bio::SeqIO->new(
-    -file => test_input_file('AY095303S1.gbk'),
-    -format  => 'genbank'
-);
-isa_ok $seqio, 'Bio::SeqIO';
-ok my $geneseq = $seqio->next_seq;
-isa_ok $geneseq, 'Bio::Seq';
-ok my ($CDS) = grep { $_->primary_tag eq 'CDS' } $geneseq->get_SeqFeatures;
-my $db;
-
-SKIP: {
-    test_skip(-tests => 5,
-              -requires_modules => [qw(Bio::DB::GenBank)],
-              -requires_networking => 1);
-
-    use_ok 'Bio::DB::GenBank';
-
-    $db = Bio::DB::GenBank->new(-verbose=> $DEBUG);
-    $CDS->verbose(-1);
-    my $cdsseq = $CDS->spliced_seq(-db => $db,-nosort => 1);
-
-    is $cdsseq->subseq(1,76),
-       'ATGCAGCCATACGCTTCCGTGAGCGGGCGATGTCTATCTAGACCAGATGCATTGCATGTGATACCGTTTGGGCGAC';
-    is $cdsseq->translate->subseq(1,100),
-       'MQPYASVSGRCLSRPDALHVIPFGRPLQAIAGRRFVRCFAKGGQPGDKKKLNVTDKLRLGNTPPTLDVLK'.
-       'APRPTDAPSAIDDAPSTSGLGLGGGVASPR';
-    # Test what happens without
-    $cdsseq = $CDS->spliced_seq(-db => $db,-nosort => 1);
-    is $cdsseq->subseq(1,76),
-       'ATGCAGCCATACGCTTCCGTGAGCGGGCGATGTCTATCTAGACCAGATGCATTGCATGTGATACCGTTTGGGCGAC';
-    is $cdsseq->translate->subseq(1,100),
-       'MQPYASVSGRCLSRPDALHVIPFGRPLQAIAGRRFVRCFAKGGQPGDKKKLNVTDKLRLGNTPPTLDVLK'.
-       'APRPTDAPSAIDDAPSTSGLGLGGGVASPR';
-}
-
-ok $seqio = Bio::SeqIO->new(
-    -file => test_input_file('AF032047.gbk'),
-    -format  => 'genbank'
-);
-isa_ok $seqio, 'Bio::SeqIO';
-ok $geneseq = $seqio->next_seq;
-isa_ok $geneseq, 'Bio::Seq';
-ok( ($CDS) = grep { $_->primary_tag eq 'CDS' } $geneseq->get_SeqFeatures );
-SKIP: {
-    test_skip(-tests => 2,
-              -requires_modules => ['Bio::DB::GenBank', 'LWP::Protocol::https'],
-              -requires_networking => 1);
-
-    my $cdsseq = $CDS->spliced_seq( -db => $db, -nosort => 1);
-    is $cdsseq->subseq(1,70),
-       'ATGGCTCGCTTCGTGGTGGTAGCCCTGCTCGCGCTACTCTCTCTGTCTGGCCTGGAGGCTATCCAGCATG';
-    is $cdsseq->translate->seq,
-       'MARFVVVALLALLSLSGLEAIQHAPKIQVYSRHPAENGKPNFLNCYVSGFHPSDIEVDLLKNGKKIEKVE'.
-       'HSDLSFSKDWSFYLLYYTEFTPNEKDEYACRVSHVTFPTPKTVKWDRTM*';
-}
-
-
-# Trans-spliced
-
-ok $seqio = Bio::SeqIO->new(
-    -format => 'genbank',
-    -file => test_input_file('NC_001284.gbk')
-);
-isa_ok $seqio, 'Bio::SeqIO';
-ok my $genome = $seqio->next_seq;
-
-for my $cds (grep { $_->primary_tag eq 'CDS' } $genome->get_SeqFeatures) {
-   ok my $spliced = $cds->spliced_seq(-nosort => 1)->translate->seq;
-   chop $spliced; # remove stop codon
-   is $spliced, ($cds->get_tag_values('translation'))[0], 'spliced_seq translation matches expected';
-}
-
-# Spliced_seq phase
-ok my $seq = Bio::SeqIO->new(
-    -format => 'fasta',
-    -file   => test_input_file('sbay_c127.fas')
-)->next_seq;
 
 ok my $sf = Bio::SeqFeature::Generic->new(
     -verbose => -1,
@@ -256,19 +177,6 @@ ok my $sf = Bio::SeqFeature::Generic->new(
     -primary => 'splicedgene'
 );
 
-ok $sf->attach_seq($seq);
-
-my %phase_check = (
-    'TTCAATGACT' => 'FNDFYSMGKS',
-    'TCAATGACTT' => 'SMTSIPWVNQ',
-    'GTTCAATGAC' => 'VQ*LLFHG*I',
-);
-
-for my $phase (-1..3) {
-    ok my $sfseq = $sf->spliced_seq(-phase => $phase);
-    ok exists $phase_check{$sfseq->subseq(1,10)};
-    is $sfseq->translate->subseq(1,10), $phase_check{$sfseq->subseq(1,10)}, 'phase check';
-}
 
 # Tags
 ok $sf->add_tag_value('note','n1');
@@ -285,45 +193,6 @@ lives_ok {
 } 'get_tagset_values lives with no tag';
 throws_ok { $sf->get_tag_values('notag') } qr/tag value that does not exist/, 'get_tag_values throws with no tag';
 
-# Circular sequence SeqFeature tests
-$seq = Bio::SeqIO->new(
-    -format => 'genbank',
-    -file   => test_input_file('PX1CG.gb')
-)->next_seq;
-
-ok $seq->is_circular, 'Phi-X174 genome is circular';
-
 # Retrieving the spliced sequence from any split location requires spliced_seq()
 
-my %sf_data = (
-    #       start
-    'A'  => [3981, 136, 1, 1542, 'join(3981..5386,1..136)', 'ATGGTTCGTT'],
-    'A*' => [4497, 136, 1, 1026, 'join(4497..5386,1..136)', 'ATGAAATCGC'],
-    'B'  => [5075, 51,  1, 363,  'join(5075..5386,1..51)',  'ATGGAACAAC'],
-);
 
-ok my @split_sfs = grep {
-    $_->location->isa('Bio::Location::SplitLocationI')
-    } $seq->get_SeqFeatures();
-
-is @split_sfs, 3, 'Only 3 split locations';
-
-for my $sf (@split_sfs) {
-    isa_ok $sf->location, 'Bio::Location::SplitLocationI';
-    ok my ($tag) = $sf->get_tag_values('product');
-    my ($start, $end, $strand, $length, $ftstring, $first_ten) = @{$sf_data{$tag}};
-
-    is $sf->location->to_FTstring, $ftstring, 'Feature string';
-    is $sf->spliced_seq->subseq(1,10), $first_ten, 'First ten nucleotides';
-    is $sf->strand, $strand, 'Strand';
-    is $sf->start, $start, 'Start';
-    is $sf->end, $end, 'End';
-    is $sf->length, $length, 'Expected length';
-}
-
-# spliced_seq() on the reverse strand, bug #88 (github)
-$seq = Bio::SeqIO->new( -file => test_input_file('AF222649-rc.gbk') )->next_seq;
-# All should start with "ATG"
-for my $feat ( $seq->get_SeqFeatures('CDS') ) {
-    ok $feat->spliced_seq->seq =~ /^ATG/, "Reverse strand is spliced correctly";
-}

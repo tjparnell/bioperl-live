@@ -1,8 +1,8 @@
 BEGIN {
     use Bio::Root::Test;
 
-    test_begin( -tests => 109,
-                -requires_modules => [qw(Bio::DB::Fasta Bio::SeqIO)] );
+    test_begin( -tests => 106,
+                -requires_modules => [qw(Bio::DB::Fasta)] );
 }
 use strict;
 use warnings;
@@ -103,27 +103,6 @@ my $test_files = [
     is $h{'AW057146:1,10'} , 'aatgtgtaca'; # in file 1.fa
     is $h{'AW057146:10,1'} , 'tgtacacatt'; # reverse complement
     is $h{'AW057443:11,20'}, 'gaaccgtcag'; # in file 4.fa
-}
-
-
-{
-    # Test writing the Bio::PrimarySeq::Fasta objects with SeqIO
-    ok my $db = Bio::DB::Fasta->new($test_dir, -reindex => 1), 'Writing with SeqIO';
-    my $out = Bio::SeqIO->new(
-        -format => 'genbank',
-        -file   => '>'.test_output_file()
-    );
-    my $primary_seq = Bio::Seq->new(-primary_seq => $db->get_Seq_by_acc('AW057119'));
-    eval {
-        $out->write_seq($primary_seq)
-    };
-    is $@, '';
-
-    $out = Bio::SeqIO->new(-format => 'embl', -file  => '>'.test_output_file());
-    eval {
-        $out->write_seq($primary_seq)
-    };
-    is $@, '';
 }
 
 

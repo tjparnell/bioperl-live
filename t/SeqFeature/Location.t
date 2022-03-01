@@ -6,14 +6,12 @@ use strict;
 BEGIN {
     use Bio::Root::Test;
     
-    test_begin(-tests => 109);
+    test_begin(-tests => 103);
 	
     use_ok('Bio::Location::Simple');
     use_ok('Bio::Location::Split');
     use_ok('Bio::Location::Fuzzy');
     use_ok('Bio::SeqFeature::Generic');
-    use_ok('Bio::SeqFeature::SimilarityPair');
-    use_ok('Bio::SeqFeature::FeaturePair');
     use_ok('Bio::SeqFeature::Lite');
 }
 
@@ -47,25 +45,15 @@ is($lite_neg->end,  2000);
 is($lite_neg->stop, 2000);
 is($lite_none->strand, 0);
 
-my $similarity = Bio::SeqFeature::SimilarityPair->new();
 
 my $feat1 = Bio::SeqFeature::Generic->new('-start' => 30, '-end' => 43, 
 					 '-strand' => -1);
 my $feat2 = Bio::SeqFeature::Generic->new('-start' => 80, '-end' => 90, 
 					 '-strand' => -1);
 
-my $featpair = Bio::SeqFeature::FeaturePair->new('-feature1' => $feat1,
-						'-feature2' => $feat2 );
-
 my $feat3 = Bio::SeqFeature::Generic->new('-start' => 35, '-end' => 50, 
 					 '-strand' => -1);
 
-is($featpair->start, 30,'Bio::SeqFeature::FeaturePair tests');
-is($featpair->end,  43);
-
-is($featpair->length, 14);
-
-ok($featpair->overlaps($feat3));
 ok($generic->overlaps($simple), 'Bio::SeqFeature::Generic tests');
 ok($generic->contains($simple));
 
